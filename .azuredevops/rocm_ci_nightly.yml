@@ -3,8 +3,14 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- users/geomin12/rocm-nightly
+schedules:
+  - cron: "*/5 * * * *"
+    displayName: Nightly test
+    branches:
+      include:
+        - develop
+        # for testing
+        - users/geomin12/rocm-nightly
 
 pool:
   vmImage: ubuntu-latest
