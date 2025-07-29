@@ -107,7 +107,9 @@ graph TD;
     rocSOLVER
     rocSPARSE
     hipBLAS
+    hipSOLVER
     hipSPARSE
+    MIOpen
     hipSPARSELt
   end
 
