@@ -93,7 +93,7 @@ Currently, the following downstream trigger paths are enabled:
 
 ```mermaid
 graph TD;
-  subgraph rocm-libraries
+  subgraph ROCm/rocm-libraries
     rocRAND
     hipRAND
     rocFFT
@@ -111,6 +111,12 @@ graph TD;
     hipSPARSE
     MIOpen
     hipSPARSELt
+  end
+  subgraph ROCm/MIVisionX
+    MIVisionX
+  end
+  subgraph ROCm/AMDMIGraphX
+    AMDMIGraphX
   end
 
   rocRAND-->hipRAND
