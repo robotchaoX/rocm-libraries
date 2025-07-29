@@ -93,10 +93,44 @@ Currently, the following downstream trigger paths are enabled:
 
 ```mermaid
 graph TD;
-  rocPRIM-->hipCUB;
-  rocPRIM-->rocThrust;
-  rocRAND-->hipRAND;
+  subgraph rocm-libraries
+    rocRAND
+    hipRAND
+    rocFFT
+    hipFFT
+    rocPRIM
+    hipCUB
+    rocThrust
+    hipBLAS-common
+    hipBLASLt
+    rocBLAS
+    rocSOLVER
+    rocSPARSE
+    hipBLAS
+    hipSPARSE
+    hipSPARSELt
+  end
+
+  rocRAND-->hipRAND
+  rocRAND-->MIOpen
+  hipRAND-->rocFFT
+  rocFFT-->hipFFT
+  rocPRIM-->hipCUB
+  rocPRIM-->rocThrust
+  rocPRIM-->rocSOLVER
+  rocPRIM-->rocSPARSE
   hipBLAS-common-->hipBLASLt
+  hipBLASLt-->rocBLAS
+  rocBLAS-->rocSOLVER
+  rocBLAS-->rocSPARSE
+  rocSOLVER-->hipBLAS
+  rocSOLVER-->hipSOLVER
+  rocSPARSE-->hipSOLVER
+  rocSPARSE-->hipSPARSE
+  hipBLAS-->MIOpen
+  hipSPARSE-->hipSPARSELt
+  MIOpen-->MIVisionX
+  MIOpen-->AMDMIGraphX
 ```
 
 ## Math CI
