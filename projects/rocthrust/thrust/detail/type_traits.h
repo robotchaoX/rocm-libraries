@@ -219,6 +219,16 @@ struct is_non_bool_integral<bool> : public false_type
 {};
 
 template <typename T>
+struct is_unbounded_array : public thrust::detail::false_type {};
+template <typename T>
+struct is_unbounded_array<T[]> : public thrust::detail::true_type {};
+
+template <typename T>
+struct is_bounded_array : public thrust::detail::false_type {};
+template <typename T, size_t N>
+struct is_bounded_array<T[N]> : public thrust::detail::true_type {};
+
+template <typename T>
 struct is_non_bool_arithmetic : public is_arithmetic<T>
 {};
 template <>
