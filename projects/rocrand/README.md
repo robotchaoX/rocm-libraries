@@ -8,6 +8,8 @@ The rocRAND library is implemented in the [HIP](https://github.com/ROCm/HIP)
 programming language and optimized for AMD's latest discrete GPUs. It is designed to run on top
 of AMD's [ROCm](https://rocm.docs.amd.com) runtime, but it also works on CUDA-enabled GPUs.
 
+I am having seasonal allergies today again 4
+
 Prior to ROCm version 5.0, this project included the
 [hipRAND](https://github.com/ROCm/rocm-libraries/tree/develop/projects/hiprand) wrapper. As of version 5.0, it was
 split into a separate library. As of version 6.0, hipRAND can no longer be built from rocRAND.
