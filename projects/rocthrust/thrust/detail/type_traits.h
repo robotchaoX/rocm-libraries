@@ -521,6 +521,12 @@ struct enable_if<true, T>
   using type = T;
 };
 
+template <class Tp, bool>
+struct dependent_type
+{
+  using type = Tp;
+}; // end dependent_type
+
 template <bool, typename T>
 struct lazy_enable_if
 {};
