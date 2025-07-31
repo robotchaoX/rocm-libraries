@@ -250,7 +250,7 @@ if(TENSILELITE_ENABLE_HOST OR HIPBLASLT_ENABLE_HOST)
 
     if(HIPBLASLT_ENABLE_MSGPACK)
         if(msgpack-cxx_FOUND)
-            target_link_libraries(tensilelite-host PRIVATE msgpack-cxx)
+            target_link_libraries(tensilelite-host PUBLIC msgpack-cxx)
         else()
             target_link_libraries(tensilelite-host PRIVATE msgpackc)
         endif()
