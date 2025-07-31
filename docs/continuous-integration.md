@@ -118,6 +118,9 @@ graph TD;
   subgraph ROCm/AMDMIGraphX
     AMDMIGraphX
   end
+  subgraph ROCm/composable_kernel
+    composable_kernel
+  end
 
   rocRAND-->hipRAND
   rocRAND-->MIOpen
@@ -139,6 +142,7 @@ graph TD;
   hipSPARSE-->hipSPARSELt
   MIOpen-->MIVisionX
   MIOpen-->AMDMIGraphX
+  composable_kernel-->MIOpen
 ```
 
 ## Math CI
