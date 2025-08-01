@@ -52,7 +52,6 @@ jobs:
         with:
           repository: "ROCm/TheRock"
           path: "TheRock"
-          ref: users/geomin12/monorepo-blas
 
       - name: Runner Health Settings
         run: |
@@ -71,6 +70,11 @@ jobs:
       - name: Fetch sources
         run: |
           ./TheRock/build_tools/fetch_sources.py --jobs 12 --no-include-math-libs
+
+      - name: Patch monorepo
+        run: |
+          python TheRock/build_tools/patch_rocm_libraries.py \
+            --repo ${{ github.workspace }}
 
       - name: Install python deps
         run: |
