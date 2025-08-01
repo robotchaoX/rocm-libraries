@@ -74,7 +74,8 @@ jobs:
       - name: Patch monorepo
         run: |
           python TheRock/build_tools/patch_rocm_libraries.py \
-            --repo ${{ github.workspace }}
+            --repo ./ \
+            --projects hipBLASLt
 
       - name: Install python deps
         run: |
