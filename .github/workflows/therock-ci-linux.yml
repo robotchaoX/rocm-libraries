@@ -75,7 +75,7 @@ jobs:
         run: |
           python TheRock/build_tools/patch_rocm_libraries.py \
             --repo ./ \
-            --projects hipBLASLt
+            --projects hipBLASLt rocBLAS hipBLAS
 
       - name: Install python deps
         run: |
