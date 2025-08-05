@@ -37,8 +37,7 @@ namespace rocRoller
     {
 
         template <ComponentBase Base>
-            requires(!CSingleUse<Base>)
-        std::shared_ptr<Base> Get(typename Base::Argument const& arg)
+        requires(!CSingleUse<Base>) std::shared_ptr<Base> Get(typename Base::Argument const& arg)
         {
             using Factory = ComponentFactory<Base>;
             auto& factory = Factory::Instance();
@@ -46,8 +45,7 @@ namespace rocRoller
         }
 
         template <ComponentBase Base>
-            requires(!CSingleUse<Base>)
-        std::shared_ptr<Base> Get(typename Base::Argument&& arg)
+        requires(!CSingleUse<Base>) std::shared_ptr<Base> Get(typename Base::Argument&& arg)
         {
             using Factory       = ComponentFactory<Base>;
             auto const& factory = Factory::Instance();
