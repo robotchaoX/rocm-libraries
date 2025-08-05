@@ -89,7 +89,7 @@ Azure CI runs for a component will trigger runs for downstream components (provi
 
 For example: a rocPRIM PR will trigger a rocPRIM job. If successful, it will then continue to run hipCUB and rocThrust jobs.
 
-Currently, the following downstream trigger paths are enabled:
+The following graph illustrates the inter-component dependencies within the mathlibs stack:
 
 ```mermaid
 graph TD;
@@ -112,15 +112,6 @@ graph TD;
     MIOpen
     hipSPARSELt
   end
-  subgraph ROCm/MIVisionX
-    MIVisionX
-  end
-  subgraph ROCm/AMDMIGraphX
-    AMDMIGraphX
-  end
-  subgraph ROCm/composable_kernel
-    composable_kernel
-  end
 
   rocRAND-->hipRAND
   rocRAND-->MIOpen
@@ -140,9 +131,6 @@ graph TD;
   rocSPARSE-->hipSPARSE
   hipBLAS-->MIOpen
   hipSPARSE-->hipSPARSELt
-  MIOpen-->MIVisionX
-  MIOpen-->AMDMIGraphX
-  composable_kernel-->MIOpen
 ```
 
 ## Math CI
