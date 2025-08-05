@@ -26,13 +26,7 @@ project_map = {
     },
     "blas": {
         "cmake_options": "-DTHEROCK_ENABLE_BLAS=ON -DTHEROCK_ENABLE_ALL=OFF",
-        "project_to_test": "hipblaslt",
-        "subtree_checkout": """projects/hipblaslt
-            projects/hipblas-common
-            project/rocblas
-            projects/hipblas
-            shared/mxdatagenerator
-            shared/rocroller
-            shared/tensile""",
+        "project_to_test": "hipblaslt, rocblas",
+        "subtree_checkout": "projects/hipblaslt\nprojects/hipblas-common\nproject/rocblas\nprojects/hipblas\nshared/mxdatagenerator\nshared/rocroller\nshared/tensile",
     }
 }
