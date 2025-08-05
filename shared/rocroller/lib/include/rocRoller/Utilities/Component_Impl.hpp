@@ -100,7 +100,7 @@ namespace rocRoller
         template <ComponentBase Base>
         ComponentFactory<Base>& ComponentFactory<Base>::Instance()
         {
-            static ComponentFactory instance; // singleton, static so global across whole project
+            static ComponentFactory instance;
 
             return instance;
         }
