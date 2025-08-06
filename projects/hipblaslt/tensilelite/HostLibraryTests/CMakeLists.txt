@@ -55,7 +55,7 @@ if(TENSILE_STATIC_ONLY)
 endif()
 
 if(NOT Tensile_FOUND)
-    find_package(Tensile 4.33.0 EXACT REQUIRED ${TENSILE_COMPONENTS} PATHS "${CMAKE_CURRENT_SOURCE_DIR}/../Tensile")
+    find_package(Tensile 5.0.0 EXACT REQUIRED ${TENSILE_COMPONENTS} PATHS "${CMAKE_CURRENT_SOURCE_DIR}/../Tensile")
 endif()
 
 if(NOT TENSILE_DISABLE_CTEST)
@@ -110,6 +110,7 @@ set(test_sources ${test_sources}
     ContractionSelectionLibrary_test.cpp
     DataTypes_test.cpp
     Predicates_test.cpp
+    testlib/source/Analytical_gtest.cpp
 )
 
 if(TENSILE_USE_LLVM)
@@ -125,6 +126,9 @@ endif()
 # endif()
 
 add_executable(TensileTests ${test_sources})
+
+# Path for yaml file used in Analytical_gtest.cpp
+target_compile_definitions(TensileTests PRIVATE YAML_PATH="${CMAKE_SOURCE_DIR}")
 
 if(NOT TENSILE_DISABLE_CTEST)
     if(GTEST_INTEGRATION)
