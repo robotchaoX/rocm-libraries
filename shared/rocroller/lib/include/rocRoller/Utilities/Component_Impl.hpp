@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <rocRoller/Assemblers/Assembler.hpp>
 #include <rocRoller/Utilities/Component.hpp>
 #include <rocRoller/Utilities/Error.hpp>
 #include <rocRoller/Utilities/Logging.hpp>
@@ -100,7 +101,8 @@ namespace rocRoller
         template <ComponentBase Base>
         ComponentFactory<Base>::ComponentFactory()
         {
-            ComponentFactory<Base>::registerImplementations();
+            if(!std::is_same<Base, Assembler>::value)
+                ComponentFactory<Base>::registerImplementations();
         }
 
         template <ComponentBase Base>
