@@ -3066,7 +3066,7 @@ void testing_matmul_with_bias(const Arguments& arg,
         //workaround before known_bug work
         if((gpu_arch_match(deviceProperties.gcnArchName, "11?")
             || gpu_arch_match(deviceProperties.gcnArchName, "12?"))
-           && (arg.gradient || arg.grouped_gemm))
+           && (arg.gradient))
         {
             hipblaslt_cerr << "No Solution Found!!" << std::endl;
             return;
