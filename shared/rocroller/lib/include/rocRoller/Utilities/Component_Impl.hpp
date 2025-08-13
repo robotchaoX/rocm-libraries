@@ -31,6 +31,7 @@
 #include <rocRoller/Utilities/Error.hpp>
 #include <rocRoller/Utilities/Logging.hpp>
 #include <rocRoller/Utilities/Utils.hpp>
+#include <stdexcept>
 
 namespace rocRoller
 {
@@ -208,6 +209,8 @@ namespace rocRoller
                                                        Matcher<Base>      matcher,
                                                        Builder<Base>      builder)
         {
+            if(name == "")
+                throw std::runtime_error(concatenate("Empty ", Base::Basename, " component name"));
             auto sameName = [&name](auto const& entry) { return entry.name == name; };
             if(std::any_of(m_entries.begin(), m_entries.end(), sameName))
                 throw std::runtime_error(
