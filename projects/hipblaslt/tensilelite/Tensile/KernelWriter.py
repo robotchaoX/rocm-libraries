@@ -179,7 +179,6 @@ class StateValues:
   numMfmaPerIter: int                    = 0
   SubTileIdxA: int                       = 0
   SubTileIdxB: int                       = 0
-  mfmaIndex: int                         = -1  # For MFMA, index of the current mfma instruction
   numReadsIterCoalescedA: int            = 0
   numReadsIterCoalescedB: int            = 0
   numReadsIterCoalescedMetadata: int     = 0
@@ -770,7 +769,6 @@ class KernelWriter(metaclass=abc.ABCMeta):
       isBarrier = kernel["LoopIters"] - self.states.numItersPLR
       writeItems = list(localWriteCode.items())
       macIterItems = macIterCode.flatitems()
-      numMfmaPerIter = len(macIterItems)
       skipLocalWriteWaitcnt = 0
       localReadsWaitcnt = 0
       localReadsIssuedInThisIter = 0
