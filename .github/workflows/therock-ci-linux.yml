@@ -25,8 +25,8 @@ jobs:
     strategy:
       fail-fast: true
     env:
-      CACHE_DIR: ${{ github.workspace }}/.container-cache
-      CCACHE_CONFIGPATH: ${{ github.workspace }}/.ccache/ccache.conf
+      # CACHE_DIR: ${{ github.workspace }}/.container-cache
+      # CCACHE_CONFIGPATH: ${{ github.workspace }}/.ccache/ccache.conf
       AMDGPU_FAMILIES: "gfx94X-dcgpu"
       TEATIME_FORCE_INTERACTIVE: 0
     steps:
@@ -54,19 +54,19 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Runner Health Settings
+      # ./build_tools/setup_ccache.py \
+      #       --config-preset "github-oss-presubmit" \
+      #       --dir "$(dirname $CCACHE_CONFIGPATH)" \
+      #       --local-path "$CACHE_DIR/ccache"
+      #     df -h
+      #     echo "ccache version: $(ccache --version)"
+      #     echo "ccache config:"
+      #     echo "---"
+      #     cat "$CCACHE_CONFIGPATH"
+      #     echo "---"
+      #     ccache -z
+      #     ccache -s -v
         run: |
-          ./build_tools/setup_ccache.py \
-            --config-preset "github-oss-presubmit" \
-            --dir "$(dirname $CCACHE_CONFIGPATH)" \
-            --local-path "$CACHE_DIR/ccache"
-          df -h
-          echo "ccache version: $(ccache --version)"
-          echo "ccache config:"
-          echo "---"
-          cat "$CCACHE_CONFIGPATH"
-          echo "---"
-          ccache -z
-          ccache -s -v
           cmake --version
           echo "Installed Python versions:"
           ls -d /opt/python
@@ -79,6 +79,12 @@ jobs:
         run: |
           ./build_tools/fetch_sources.py --jobs 12 --no-include-rocm-libraries
 
+      - name: LS TEST
+        run: |
+          ls
+          echo ""
+          ls rocm-libraries
+
       - name: Install python deps
         run: |
           pip install -r requirements.txt
@@ -88,7 +94,7 @@ jobs:
         env:
           amdgpu_families: ${{ env.AMDGPU_FAMILIES }}
           package_version: ADHOCBUILD
-          extra_cmake_options: ${{ inputs.cmake_options }}
+          extra_cmake_options: "-DTHEROCK_ROCM_LIBRARIES_SOURCE_DIR=rocm-libraries ${{ inputs.cmake_options }}"
           BUILD_DIR: build
         run: |
           python3 build_tools/github_actions/build_configure.py
