@@ -2506,39 +2506,9 @@ amd_buffer_load_invalid_element_return_customized_value(const T* p_src_wave,
     {
         if(!src_thread_element_valid)
         {
-            if constexpr(is_detected<has_type, T>::value)
-            {
-                // Use vector_t for not valid elements to avoid permute instructions.
-                // Get raw type from structure
-                using vector_t = typename T::type __attribute__((ext_vector_type(N)));
-                if constexpr(sizeof(vector_t) != sizeof(typename T::type) * N)
-                {
-                    // Not possible to use set_as
-                    return thread_buffer<T, N>{customized_value};
-                }
-                else
-                {
-                    thread_buffer<T, N> tmp;
-                    tmp.template set_as<vector_t>(number<0>{}, vector_t{customized_value});
-                    return tmp;
-                }
-            }
-            else
-            {
-                // Use vector_t for not valid elements to avoid permute instructions.
-                using vector_t = T __attribute__((ext_vector_type(N)));
-                if constexpr(sizeof(vector_t) != sizeof(T) * N)
-                {
-                    // Not possible to use set_as
-                    return thread_buffer<T, N>{customized_value};
-                }
-                else
-                {
-                    thread_buffer<T, N> tmp;
-                    tmp.template set_as<vector_t>(number<0>{}, vector_t{customized_value});
-                    return tmp;
-                }
-            }
+            // ext_vector_type brace initialization only seeds lane 0 for non-zero scalars.
+            // Keep the explicit per-element fill so padded max/min-style identities stay correct.
+            return thread_buffer<T, N>{customized_value};
         }
     }
     return amd_buffer_load_impl<T, N, coherence>(
