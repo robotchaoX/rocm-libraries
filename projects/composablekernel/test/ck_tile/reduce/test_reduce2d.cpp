@@ -255,6 +255,77 @@ class TestCkTileReduce : public ::testing::Test
                           kept_dims,
                           reduce_dims);
     }
+
+    void RunMaxPaddingRegressionTest(ck_tile::index_t dim0, ck_tile::index_t dim1)
+    {
+        static_assert(std::is_same_v<ReduceOpType, ck_tile::ReduceOp::Max>,
+                      "Regression test is only meaningful for max reduction");
+        static_assert(std::is_same_v<XDataType, float> && std::is_same_v<YDataType, float> &&
+                          std::is_same_v<ComputeDataType, float>,
+                      "Regression test currently targets the float max configuration");
+
+        constexpr auto kept_dims   = ck_tile::sequence<0>{};
+        constexpr auto reduce_dims = ck_tile::sequence<1>{};
+
+        std::vector<ck_tile::index_t> input_shape   = {dim0, dim1};
+        std::vector<ck_tile::index_t> input_strides = {dim1, 1};
+        std::vector<ck_tile::index_t> output_shape  = {dim0};
+        std::vector<ck_tile::index_t> output_strides = {1};
+
+        ck_tile::HostTensor<XDataType> h_x(input_shape, input_strides);
+        ck_tile::HostTensor<YDataType> h_y(output_shape, output_strides);
+        ck_tile::HostTensor<YDataType> h_y_ref(output_shape, output_strides);
+
+        h_x.GenerateTensorValue([&](auto i0, auto i1) {
+            return static_cast<XDataType>(-1000.0f - 16.0f * static_cast<float>(i0)
+                                          - static_cast<float>(i1));
+        });
+        h_y.SetZero();
+        h_y_ref.SetZero();
+
+        ck_tile::DeviceMem d_x_mem(h_x.get_element_space_size_in_bytes());
+        ck_tile::DeviceMem d_y_mem(h_y.get_element_space_size_in_bytes());
+
+        d_x_mem.ToDevice(h_x.data());
+        d_y_mem.ToDevice(h_y.data());
+
+        using Problem = ck_tile::Reduce2dProblem<XDataType,
+                                                 ComputeDataType,
+                                                 YDataType,
+                                                 TestReduce2dShape,
+                                                 ReduceOpType,
+                                                 decltype(kept_dims),
+                                                 decltype(reduce_dims),
+                                                 2>;
+        using Kernel  = ck_tile::ReduceKernel<Problem>;
+
+        const ck_tile::index_t kBlockSize      = Kernel::BlockSize();
+        constexpr ck_tile::index_t kBlockPerCu = 1;
+        const ck_tile::index_t kGridSize =
+            (dim0 + TestReduce2dShape::Block_M - 1) / TestReduce2dShape::Block_M;
+
+        const auto input_shape_tuple   = ck_tile::make_tuple(dim0, dim1);
+        const auto input_strides_tuple = ck_tile::make_tuple(dim1, 1);
+
+        ck_tile::launch_kernel(
+            ck_tile::stream_config{nullptr, false, 0},
+            ck_tile::make_kernel<kBlockPerCu>(Kernel{},
+                                              kGridSize,
+                                              kBlockSize,
+                                              0,
+                                              static_cast<XDataType*>(d_x_mem.GetDeviceBuffer()),
+                                              static_cast<YDataType*>(d_y_mem.GetDeviceBuffer()),
+                                              input_shape_tuple,
+                                              input_strides_tuple));
+
+        d_y_mem.FromDevice(h_y.data());
+
+        ck_tile::reference_reduce<XDataType, ComputeDataType, YDataType>(
+            h_x, h_y_ref, ReduceOpType{}, kept_dims, reduce_dims);
+
+        EXPECT_TRUE(ck_tile::check_err(
+            h_y, h_y_ref, "Error: Max reduction padding regression detected!", 0.0, 0.0));
+    }
 };
 
 // Shape parameters for different test configurations
@@ -341,4 +412,16 @@ TYPED_TEST(TestCkTileReduce, Test4D_KeepDim01_ReduceDim23_32x256x16x16)
 TYPED_TEST(TestCkTileReduce, Test4D_KeepDim03_ReduceDim12_16x32x32x128)
 {
     this->RunTest4D_KeepDim03_ReduceDim12(16, 32, 32, 128);
+}
+
+TYPED_TEST(TestCkTileReduce, Test2D_MaxPaddingRegression_33x33)
+{
+    if constexpr(std::is_same_v<typename TestFixture::ReduceOpType, ck_tile::ReduceOp::Max>)
+    {
+        this->RunMaxPaddingRegressionTest(33, 33);
+    }
+    else
+    {
+        GTEST_SKIP() << "Padding regression test only applies to max reduction.";
+    }
 }
